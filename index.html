@@ -4,83 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banking Dashboard</title>
-    <script type="module">
-        // Import Firebase functions
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js";
-        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAoj9XAvXwbUp5Ak0aKrQp3ctkfRi3zYx0",
-            authDomain: "cmg-banking.firebaseapp.com",
-            databaseURL: "https://cmg-banking-default-rtdb.firebaseio.com",
-            projectId: "cmg-banking",
-            storageBucket: "cmg-banking.appspot.com",
-            messagingSenderId: "690885218349",
-            appId: "1:690885218349:web:e7219f3b8d817ddc3fa8a4"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth();
-        const database = getDatabase(app);
-
-        // Sign in the user (this is just a basic example; you'd probably use Firebase UI for a real app)
-        signInWithEmailAndPassword(auth, "user-email@example.com", "user-password")
-            .then((userCredential) => {
-                // Signed in
-                const user = userCredential.user;
-                // Retrieve and display account balance
-                const balanceRef = ref(database, 'Balances/ATB');
-                onValue(balanceRef, (snapshot) => {
-                    const balance = snapshot.val();
-                    document.getElementById("atb").innerText = "$" + balance;
-                });
-
-                // Retrieve last 6 transactions
-                const transactionsRef = ref(database, 'Transactions');
-                onValue(transactionsRef, (snapshot) => {
-                    const transactions = snapshot.val();
-                    let transactionList = "";
-                    for (let i = transactions.length - 6; i < transactions.length; i++) {
-                        transactionList += `<li>${transactions[i].Name}: <span style="color:red;">-$${transactions[i].Amount}</span></li>`;
-                    }
-                    document.getElementById("lastTransactions").innerHTML = transactionList;
-                });
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorCode, errorMessage);
-            });
-    </script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .title {
-            text-align: center;
-            font-size: 36px;
-            margin-top: 20px;
-        }
-        .last-transactions {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 12px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="app.js"></script>
 </head>
 <body>
-    <div class="title">Welcome Back, Gavin!</div>
-    <div class="last-transactions">
-        <h4>Last 6 Transactions</h4>
-        <ul id="lastTransactions"></ul>
+    <header>
+        <h1>Welcome Back, Gavin!</h1>
+    </header>
+
+    <!-- Sidebar Navbar -->
+    <nav class="sidebar">
+        <div class="toggle-btn" id="sidebarToggle">☰</div>
+        <ul class="nav-links">
+            <li><a href="#" id="calculationsBtn">Calculations</a></li>
+            <li><a href="#" id="atbEditBtn">ATB Edit</a></li>
+            <li><a href="#" id="paydayBtn">Payday</a></li>
+        </ul>
+    </nav>
+
+    <section class="dashboard">
+        <!-- Account Total Balance -->
+        <div class="card" id="account-summary">
+            <h2>Account Total Balance (ATB):</h2>
+            <div class="balance" id="atb">$0.00</div>
+        </div>
+
+        <!-- Balances Card -->
+        <div class="card">
+            <h2>Balances</h2>
+            <ul>
+                <li>Gas: $<span id="gasBalance">0.00</span></li>
+                <li>Insurance: $<span id="insuranceBalance">0.00</span></li>
+                <li>Savings: $<span id="savingsBalance">0.00</span></li>
+                <li>Misc: $<span id="miscBalance">0.00</span></li>
+            </ul>
+        </div>
+
+        <!-- Misc Spending Card -->
+        <div class="card">
+            <h2>Misc Spending</h2>
+            <p>Spending money left: $<span id="miscSpending">0.00</span></p>
+        </div>
+
+        <!-- New Negative Transaction Card -->
+        <div class="card">
+            <h2>New Neg. Transaction</h2>
+            <p>Click "New" to create a new negative transaction.</p>
+            <button id="newTransactionBtn">New</button>
+        </div>
+
+        <!-- Reimbursement Card -->
+        <div class="card">
+            <h2>Reimbursement</h2>
+            <div id="reimbursementContent">You are not currently expecting reimbursement.</div>
+        </div>
+
+        <!-- Taxes Card -->
+        <div class="card">
+            <h2>Taxes</h2>
+            <button id="calculateTaxesBtn">Calculate Taxes</button>
+        </div>
+
+        <!-- Last 6 Transactions -->
+        <div class="card last-transactions">
+            <h2>Last 6 Transactions</h2>
+            <ul id="lastTransactions"></ul>
+        </div>
+    </section>
+
+    <!-- Modals (hidden by default) -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeTransactionModal">&times;</span>
+            <h3>New Negative Transaction</h3>
+            <label for="transactionAmount">$:</label>
+            <input type="number" id="transactionAmount" placeholder="Enter amount">
+            <div>
+                <label><input type="radio" name="category" value="Misc" checked> Misc</label>
+                <label><input type="radio" name="category" value="Gas"> Gas</label>
+                <label><input type="radio" name="category" value="Reimbursement"> Reimbursement</label>
+            </div>
+            <button id="addTransactionBtn">Add</button>
+        </div>
     </div>
-    <div id="dashboard">
-        <!-- Account Total Balance (ATB) and other dashboard elements will go here -->
-        <h2 id="atb">$0.00</h2>
+
+    <div id="taxModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeTaxModal">&times;</span>
+            <h3>Calculate Taxes</h3>
+            <label>Savings:</label><input type="text" id="taxSavings" value="50%"><br>
+            <label>Social Security:</label><input type="text" id="taxSS" value="6.2%"><br>
+            <label>Medicare:</label><input type="text" id="taxMedicare" value="1.45%"><br>
+            <label>Federal Tax:</label><input type="text" id="taxFederal" value="10%"><br>
+            <label>State Tax:</label><input type="text" id="taxState" value="5%"><br>
+            <label>County Tax:</label><input type="text" id="taxCounty" value="1%"><br>
+            <button id="updateTaxesBtn">Update</button>
+        </div>
     </div>
+
 </body>
 </html>
