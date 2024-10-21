@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Dashboard</title>
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAoj9XAvXwbUp5Ak0aKrQp3ctkfRi3zYx0",
+            authDomain: "cmg-banking.firebaseapp.com",
+            databaseURL: "https://cmg-banking-default-rtdb.firebaseio.com",
+            projectId: "cmg-banking",
+            storageBucket: "cmg-banking.appspot.com",
+            messagingSenderId: "690885218349",
+            appId: "1:690885218349:web:e7219f3b8d817ddc3fa8a4"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const database = getDatabase(app);
+
+        // Sign in the user (this is just a basic example; you'd probably use Firebase UI for a real app)
+        signInWithEmailAndPassword(auth, "user-email@example.com", "user-password")
+            .then((userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                // Retrieve and display account balance
+                const balanceRef = ref(database, 'Balances/ATB');
+                onValue(balanceRef, (snapshot) => {
+                    const balance = snapshot.val();
+                    document.getElementById("atb").innerText = "$" + balance;
+                });
+
+                // Retrieve last 6 transactions
+                const transactionsRef = ref(database, 'Transactions');
+                onValue(transactionsRef, (snapshot) => {
+                    const transactions = snapshot.val();
+                    let transactionList = "";
+                    for (let i = transactions.length - 6; i < transactions.length; i++) {
+                        transactionList += `<li>${transactions[i].Name}: <span style="color:red;">-$${transactions[i].Amount}</span></li>`;
+                    }
+                    document.getElementById("lastTransactions").innerHTML = transactionList;
+                });
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+            });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .title {
+            text-align: center;
+            font-size: 36px;
+            margin-top: 20px;
+        }
+        .last-transactions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">Welcome Back, Gavin!</div>
+    <div class="last-transactions">
+        <h4>Last 6 Transactions</h4>
+        <ul id="lastTransactions"></ul>
+    </div>
+    <div id="dashboard">
+        <!-- Account Total Balance (ATB) and other dashboard elements will go here -->
+        <h2 id="atb">$0.00</h2>
+    </div>
+</body>
+</html>
