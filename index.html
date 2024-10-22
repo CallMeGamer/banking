@@ -10,7 +10,7 @@
 <body>
     <header>
         <h1>Welcome Back, Gavin!</h1>
-        <div class="version">v1.5</div> <!-- Updated Version Control -->
+        <div class="version">v1.6</div> <!-- Updated Version Control -->
     </header>
 
     <!-- Sidebar Navbar -->
@@ -84,7 +84,14 @@
             <div>
                 <label><input type="radio" name="category" value="Misc" checked> Misc</label>
                 <label><input type="radio" name="category" value="Gas"> Gas</label>
-                <label><input type="radio" name="category" value="Reimbursement"> Reimbursement</label>
+                <label><input type="radio" name="category" value="Reimbursement" id="reimbursementRadio"> Reimbursement</label>
+            </div>
+            <!-- Reimbursement-specific fields (hidden by default) -->
+            <div id="reimbursementDetails" style="display: none;">
+                <label for="reimburserName">Reimburser Name:</label>
+                <input type="text" id="reimburserName" placeholder="Enter reimburser's name" class="styled-input">
+                <label for="transactionName">Transaction Name:</label>
+                <input type="text" id="transactionName" placeholder="Enter transaction name" class="styled-input">
             </div>
             <button class="btn" id="addTransactionBtn">Add</button>
         </div>
