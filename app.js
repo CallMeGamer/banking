@@ -3,15 +3,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js";
 
-// Firebase configuration
+// Your provided Firebase configuration
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    databaseURL: "YOUR_DATABASE_URL",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyAoj9XAvXwbUp5Ak0aKrQp3ctkfRi3zYx0",
+    authDomain: "cmg-banking.firebaseapp.com",
+    databaseURL: "https://cmg-banking-default-rtdb.firebaseio.com",
+    projectId: "cmg-banking",
+    storageBucket: "cmg-banking.appspot.com",
+    messagingSenderId: "690885218349",
+    appId: "1:690885218349:web:e7219f3b8d817ddc3fa8a4"
 };
 
 // Initialize Firebase
@@ -52,7 +52,7 @@ signInWithEmailAndPassword(auth, "user-email@example.com", "user-password")
     });
 
 // Sidebar toggle
-const sidebar = document.querySelector('.sidebar');
+const sidebar = document.getElementById('sidebar');
 document.getElementById('sidebarToggle').onclick = function() {
     sidebar.style.left = sidebar.style.left === '0px' ? '-200px' : '0px';
 };
