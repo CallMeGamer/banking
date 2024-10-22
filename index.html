@@ -13,7 +13,7 @@
 <body>
     <header>
         <h1>Welcome Back, Gavin!</h1>
-        <div class="version">v1.9</div> <!-- Updated Version Control -->
+        <div class="version">v1.10</div> <!-- Updated Version Control -->
     </header>
 
     <!-- Sidebar Navbar -->
@@ -33,10 +33,21 @@
             <div class="balance" id="atb">$0.00</div>
         </div>
 
-        <!-- Spending Money Card -->
-        <div class="card" id="spending-summary" style="color: green;">
+        <!-- Balances Card -->
+        <div class="card">
+            <h2>Balances</h2>
+            <ul>
+                <li>Gas: $<span id="gasBalance">0.00</span></li>
+                <li>Insurance: $<span id="insuranceBalance">0.00</span></li>
+                <li>Savings: $<span id="savingsBalance">0.00</span></li>
+                <li>Misc: $<span id="miscBalance">0.00</span></li>
+            </ul>
+        </div>
+
+        <!-- Spending Money Card (Green Font) -->
+        <div class="card" id="spending-summary">
             <h2>Spending Money:</h2>
-            <div class="balance" id="miscBalance">$0.00</div>
+            <div class="balance" id="miscBalance" style="color: green;">$0.00</div>
         </div>
 
         <!-- New Negative Transaction Card -->
