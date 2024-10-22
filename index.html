@@ -13,7 +13,7 @@
 <body>
     <header>
         <h1>Welcome Back, Gavin!</h1>
-        <div class="version">v1.11</div> <!-- Updated Version Control -->
+        <div class="version">v1.12</div> <!-- Updated Version Control -->
     </header>
 
     <!-- Sidebar Navbar -->
@@ -35,7 +35,10 @@
 
         <!-- Balances Card -->
         <div class="card">
-            <h2>Balances</h2>
+            <h2>Balances 
+                <!-- Refresh Icon in the top right of the Balances Card -->
+                <span id="refreshBalances" style="float: right; cursor: pointer;">&#x21bb;</span>
+            </h2>
             <ul>
                 <li>Gas: $<span id="gasBalance">0.00</span></li>
                 <li>Insurance: $<span id="insuranceBalance">0.00</span></li>
