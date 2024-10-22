@@ -1,6 +1,5 @@
 // calculations.js
 
-// Example calculation function for ATB
 function calculateBalances(atb, gas, insurance, savings, misc) {
     return {
         gasBalance: gas,
@@ -11,7 +10,7 @@ function calculateBalances(atb, gas, insurance, savings, misc) {
     };
 }
 
-// Assuming this data would come from form inputs or database
+// Example function to update balances
 function updateBalances() {
     const atb = 1000;  // Example value
     const gas = 50;
@@ -21,12 +20,12 @@ function updateBalances() {
 
     const balances = calculateBalances(atb, gas, insurance, savings, misc);
 
-    document.getElementById("gasBalance").textContent = balances.gasBalance;
-    document.getElementById("insuranceBalance").textContent = balances.insuranceBalance;
-    document.getElementById("savingsBalance").textContent = balances.savingsBalance;
-    document.getElementById("miscBalance").textContent = balances.miscBalance;
-    document.getElementById("atb").textContent = `$${balances.atb}`;
+    document.getElementById("gasBalance").textContent = balances.gasBalance.toFixed(2);
+    document.getElementById("insuranceBalance").textContent = balances.insuranceBalance.toFixed(2);
+    document.getElementById("savingsBalance").textContent = balances.savingsBalance.toFixed(2);
+    document.getElementById("miscBalance").textContent = balances.miscBalance.toFixed(2);
+    document.getElementById("atb").textContent = `$${balances.atb.toFixed(2)}`;
 }
 
-// Call this function to update balances wherever needed
+// Call this function to update balances when necessary
 updateBalances();
