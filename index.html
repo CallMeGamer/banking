@@ -33,21 +33,10 @@
             <div class="balance" id="atb">$0.00</div>
         </div>
 
-        <!-- Balances Card -->
-        <div class="card">
-            <h2>Balances</h2>
-            <ul>
-                <li>Gas: $<span id="gasBalance">0.00</span></li>
-                <li>Insurance: $<span id="insuranceBalance">0.00</span></li>
-                <li>Savings: $<span id="savingsBalance">0.00</span></li>
-                <li>Misc: $<span id="miscBalance">0.00</span></li>
-            </ul>
-        </div>
-
-        <!-- Misc Spending Card -->
-        <div class="card">
-            <h2>Misc Spending</h2>
-            <p>Spending money left: $<span id="miscSpending">0.00</span></p>
+        <!-- Spending Money Card -->
+        <div class="card" id="spending-summary" style="color: green;">
+            <h2>Spending Money:</h2>
+            <div class="balance" id="miscBalance">$0.00</div>
         </div>
 
         <!-- New Negative Transaction Card -->
@@ -61,12 +50,6 @@
         <div class="card">
             <h2>Reimbursement</h2>
             <div id="reimbursementContent">You are not currently expecting reimbursement.</div>
-        </div>
-
-        <!-- Taxes Card -->
-        <div class="card">
-            <h2>Taxes</h2>
-            <button class="btn" id="calculateTaxesBtn">Calculate Taxes</button>
         </div>
 
         <!-- Last 6 Transactions -->
@@ -97,21 +80,6 @@
                 <input type="text" id="transactionName" placeholder="Enter transaction name" class="styled-input">
             </div>
             <button class="btn" id="addTransactionBtn">Add</button>
-        </div>
-    </div>
-
-    <!-- Tax Modal -->
-    <div id="taxModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close" id="closeTaxModal">&times;</span>
-            <h3>Calculate Taxes</h3>
-            <label>Savings:</label><input type="text" id="taxSavings" value="50%" class="styled-input"><br>
-            <label>Social Security:</label><input type="text" id="taxSS" value="6.2%" class="styled-input"><br>
-            <label>Medicare:</label><input type="text" id="taxMedicare" value="1.45%" class="styled-input"><br>
-            <label>Federal Tax:</label><input type="text" id="taxFederal" value="10%" class="styled-input"><br>
-            <label>State Tax:</label><input type="text" id="taxState" value="5%" class="styled-input"><br>
-            <label>County Tax:</label><input type="text" id="taxCounty" value="1%" class="styled-input"><br>
-            <button class="btn" id="updateTaxesBtn">Update</button>
         </div>
     </div>
 
