@@ -37,6 +37,32 @@ document.addEventListener('DOMContentLoaded', function () {
         taxModal.style.display = "none";
     });
 
+    // Modal for ATB Edit
+    const atbEditBtn = document.getElementById("atbEditBtn");
+    const atbModal = document.getElementById("atbModal");
+    const closeAtbModal = document.getElementById("closeAtbModal");
+
+    atbEditBtn.addEventListener('click', function () {
+        atbModal.style.display = "block";
+    });
+
+    closeAtbModal.addEventListener('click', function () {
+        atbModal.style.display = "none";
+    });
+
+    // Modal for Payday
+    const paydayBtn = document.getElementById("paydayBtn");
+    const paydayModal = document.getElementById("paydayModal");
+    const closePaydayModal = document.getElementById("closePaydayModal");
+
+    paydayBtn.addEventListener('click', function () {
+        paydayModal.style.display = "block";
+    });
+
+    closePaydayModal.addEventListener('click', function () {
+        paydayModal.style.display = "none";
+    });
+
     // Close modals if clicking outside the modal content
     window.addEventListener('click', function (event) {
         if (event.target === transactionModal) {
@@ -44,6 +70,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         if (event.target === taxModal) {
             taxModal.style.display = "none";
+        }
+        if (event.target === atbModal) {
+            atbModal.style.display = "none";
+        }
+        if (event.target === paydayModal) {
+            paydayModal.style.display = "none";
         }
     });
 });
