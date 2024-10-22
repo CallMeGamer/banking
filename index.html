@@ -13,7 +13,7 @@
 <body>
     <header>
         <h1>Welcome Back, Gavin!</h1>
-        <div class="version">v1.10</div> <!-- Updated Version Control -->
+        <div class="version">v1.11</div> <!-- Updated Version Control -->
     </header>
 
     <!-- Sidebar Navbar -->
@@ -115,6 +115,21 @@
             <label for="payDate">Pay Date:</label>
             <input type="date" id="payDate" class="styled-input">
             <button class="btn" id="addPaydayBtn">Add Payday</button>
+        </div>
+    </div>
+
+    <!-- Calculations Modal -->
+    <div id="calculationsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeCalculationsModal">&times;</span>
+            <h3>Edit Calculations</h3>
+            <label>Savings (%):</label>
+            <input type="number" id="calcSavings" class="styled-input"><br>
+            <label>Gas:</label>
+            <input type="number" id="calcGas" class="styled-input" value="50"><br>
+            <label>Insurance:</label>
+            <input type="number" id="calcInsurance" class="styled-input" value="65"><br>
+            <button class="btn" id="updateCalculationsBtn">Update</button>
         </div>
     </div>
 
