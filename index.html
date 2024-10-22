@@ -5,16 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banking Dashboard</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="scripts.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sidebar toggle functionality
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+
+            sidebarToggle.addEventListener('click', function () {
+                if (sidebar.style.left === '0px') {
+                    sidebar.style.left = '-200px';
+                } else {
+                    sidebar.style.left = '0px';
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     <header>
         <h1>Welcome Back, Gavin!</h1>
-        <div class="version">v1.2</div> <!-- Updated Version Control -->
+        <div class="version">v1.3</div> <!-- Updated Version Control -->
     </header>
 
     <!-- Sidebar Navbar -->
-    <nav class="sidebar" id="sidebar">
+    <nav class="sidebar" id="sidebar" style="left: -200px;">
         <div class="toggle-btn" id="sidebarToggle">☰</div>
         <ul class="nav-links">
             <li><a href="#">Calculations</a></li>
@@ -72,36 +86,5 @@
             <ul id="lastTransactions"></ul>
         </div>
     </section>
-
-    <!-- Modals (hidden by default) -->
-    <div id="transactionModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeTransactionModal">&times;</span>
-            <h3>New Negative Transaction</h3>
-            <label for="transactionAmount">$:</label>
-            <input type="number" id="transactionAmount" placeholder="Enter amount">
-            <div>
-                <label><input type="radio" name="category" value="Misc" checked> Misc</label>
-                <label><input type="radio" name="category" value="Gas"> Gas</label>
-                <label><input type="radio" name="category" value="Reimbursement"> Reimbursement</label>
-            </div>
-            <button class="btn" id="addTransactionBtn">Add</button>
-        </div>
-    </div>
-
-    <div id="taxModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeTaxModal">&times;</span>
-            <h3>Calculate Taxes</h3>
-            <label>Savings:</label><input type="text" id="taxSavings" value="50%"><br>
-            <label>Social Security:</label><input type="text" id="taxSS" value="6.2%"><br>
-            <label>Medicare:</label><input type="text" id="taxMedicare" value="1.45%"><br>
-            <label>Federal Tax:</label><input type="text" id="taxFederal" value="10%"><br>
-            <label>State Tax:</label><input type="text" id="taxState" value="5%"><br>
-            <label>County Tax:</label><input type="text" id="taxCounty" value="1%"><br>
-            <button class="btn" id="updateTaxesBtn">Update</button>
-        </div>
-    </div>
-
 </body>
 </html>
