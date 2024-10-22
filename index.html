@@ -13,7 +13,7 @@
     </header>
 
     <!-- Sidebar Navbar -->
-    <nav class="sidebar">
+    <nav class="sidebar" id="sidebar">
         <div class="toggle-btn" id="sidebarToggle">☰</div>
         <ul class="nav-links">
             <li><a href="#" id="calculationsBtn">Calculations</a></li>
@@ -50,7 +50,7 @@
         <div class="card">
             <h2>New Neg. Transaction</h2>
             <p>Click "New" to create a new negative transaction.</p>
-            <button id="newTransactionBtn">New</button>
+            <button class="btn" id="newTransactionBtn">New</button>
         </div>
 
         <!-- Reimbursement Card -->
@@ -62,7 +62,7 @@
         <!-- Taxes Card -->
         <div class="card">
             <h2>Taxes</h2>
-            <button id="calculateTaxesBtn">Calculate Taxes</button>
+            <button class="btn" id="calculateTaxesBtn">Calculate Taxes</button>
         </div>
 
         <!-- Last 6 Transactions -->
@@ -84,7 +84,7 @@
                 <label><input type="radio" name="category" value="Gas"> Gas</label>
                 <label><input type="radio" name="category" value="Reimbursement"> Reimbursement</label>
             </div>
-            <button id="addTransactionBtn">Add</button>
+            <button class="btn" id="addTransactionBtn">Add</button>
         </div>
     </div>
 
@@ -98,7 +98,7 @@
             <label>Federal Tax:</label><input type="text" id="taxFederal" value="10%"><br>
             <label>State Tax:</label><input type="text" id="taxState" value="5%"><br>
             <label>County Tax:</label><input type="text" id="taxCounty" value="1%"><br>
-            <button id="updateTaxesBtn">Update</button>
+            <button class="btn" id="updateTaxesBtn">Update</button>
         </div>
     </div>
 
