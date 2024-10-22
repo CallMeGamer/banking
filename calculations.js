@@ -1,31 +1,24 @@
 // calculations.js
 
-function calculateBalances(atb, gas, insurance, savings, misc) {
-    return {
-        gasBalance: gas,
-        insuranceBalance: insurance,
-        savingsBalance: savings,
-        miscBalance: misc,
-        atb: atb
-    };
+function updateBalancesBasedOnAtb(atb) {
+    // Example rules for splitting the ATB into balances
+    const gasAllocation = 50;  // $50 for Gas
+    const insuranceAllocation = 65;  // $65 for Insurance
+    const savingsAllocation = atb * 0.5;  // 50% to Savings
+    const miscAllocation = atb - (gasAllocation + insuranceAllocation + savingsAllocation);
+
+    // Update UI
+    document.getElementById("gasBalance").textContent = gasAllocation.toFixed(2);
+    document.getElementById("insuranceBalance").textContent = insuranceAllocation.toFixed(2);
+    document.getElementById("savingsBalance").textContent = savingsAllocation.toFixed(2);
+    document.getElementById("miscBalance").textContent = miscAllocation.toFixed(2);
+
+    // Update ATB
+    document.getElementById("atb").textContent = `$${atb.toFixed(2)}`;
 }
 
-// Example function to update balances
-function updateBalances() {
-    const atb = 1000;  // Example value
-    const gas = 50;
-    const insurance = 65;
-    const savings = 500;
-    const misc = 385;
-
-    const balances = calculateBalances(atb, gas, insurance, savings, misc);
-
-    document.getElementById("gasBalance").textContent = balances.gasBalance.toFixed(2);
-    document.getElementById("insuranceBalance").textContent = balances.insuranceBalance.toFixed(2);
-    document.getElementById("savingsBalance").textContent = balances.savingsBalance.toFixed(2);
-    document.getElementById("miscBalance").textContent = balances.miscBalance.toFixed(2);
-    document.getElementById("atb").textContent = `$${balances.atb.toFixed(2)}`;
+function addTransactionToPrevious(amount, name, date) {
+    const transactionsList = document.getElementById("lastTransactions");
+    const newTransaction = `<li>${name}: <span style="color: red;">-$${amount.toFixed(2)}</span> (${date})</li>`;
+    transactionsList.innerHTML += newTransaction;
 }
-
-// Call this function to update balances when necessary
-updateBalances();
