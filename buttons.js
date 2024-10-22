@@ -9,24 +9,30 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
     if (!isNaN(amount)) {
         let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
         let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
+        let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
 
         if (category === "Reimbursement" && reimburserName && transactionName) {
             // Subtract from ATB and Misc
             currentAtb -= amount;
             miscBalance -= amount;
-            updateBalancesBasedOnAtb(currentAtb, miscBalance);
+            updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
 
             // Add reimbursement transaction to the "Reimbursement" card and PTC
             addReimbursementTransaction(reimburserName, transactionName, amount);
             addTransactionToPrevious(amount, `Reimbursement from ${reimburserName}`, new Date().toLocaleDateString(), "red");
 
-        } else if (category === "Gas" || category === "Misc") {
-            // Handle regular transactions (Gas, Misc)
+        } else if (category === "Gas") {
+            // Deduct from Gas, not Misc
             currentAtb -= amount;
-            if (category === "Misc") miscBalance -= amount;
-            updateBalancesBasedOnAtb(currentAtb, miscBalance);
+            gasBalance -= amount;
+            updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
+            addTransactionToPrevious(amount, "Gas", new Date().toLocaleDateString(), "red");
 
-            addTransactionToPrevious(amount, category, new Date().toLocaleDateString(), "red");
+        } else if (category === "Misc") {
+            currentAtb -= amount;
+            miscBalance -= amount;
+            updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
+            addTransactionToPrevious(amount, "Misc", new Date().toLocaleDateString(), "red");
         }
 
         document.getElementById("transactionModal").style.display = "none";
@@ -38,9 +44,10 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
 document.getElementById("updateAtbBtn").addEventListener('click', function () {
     const newAtb = parseFloat(document.getElementById("atbAmount").value);
     let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
+    let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
     if (!isNaN(newAtb)) {
         // Update ATB and recalculate balances
-        updateBalancesBasedOnAtb(newAtb, miscBalance);
+        updateBalancesBasedOnAtb(newAtb, miscBalance, gasBalance);
         document.getElementById("atbModal").style.display = "none";
     } else {
         alert("Please enter a valid amount.");
@@ -55,10 +62,11 @@ document.getElementById("addPaydayBtn").addEventListener('click', function () {
         // Update ATB by adding the payday amount
         let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
         let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
+        let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
         currentAtb += payAmount;
 
         // Recalculate and update balances based on the new ATB
-        updateBalancesBasedOnAtb(currentAtb, miscBalance);
+        updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
         
         // Add payday transaction to the "Previous Transactions" card
         addTransactionToPrevious(payAmount, "Payday", payDate, "green");
@@ -82,11 +90,12 @@ function addReimbursementTransaction(name, reason, amount) {
     newReimbursement.querySelector('.close-reimbursement').addEventListener('click', function () {
         let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
         let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
+        let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
 
         // Add the reimbursement amount back to ATB and Misc
         currentAtb += amount;
         miscBalance += amount;
-        updateBalancesBasedOnAtb(currentAtb, miscBalance);
+        updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
 
         // Add positive transaction to the Previous Transactions Card (PTC)
         addTransactionToPrevious(amount, `Reimbursement Closed: ${name}`, new Date().toLocaleDateString(), "green");
