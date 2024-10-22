@@ -7,19 +7,26 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
     const transactionName = document.getElementById("transactionName").value;
 
     if (!isNaN(amount)) {
-        if (category === "Reimbursement" && reimburserName && transactionName) {
-            // Add reimbursement transaction to the "Reimbursement" card
-            addReimbursementTransaction(reimburserName, transactionName, amount);
+        let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
+        let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
 
-            // Add transaction to the "Previous Transactions" card
-            addTransactionToPrevious(amount, `Reimbursement from ${reimburserName}`, new Date().toLocaleDateString());
+        if (category === "Reimbursement" && reimburserName && transactionName) {
+            // Subtract from ATB and Misc
+            currentAtb -= amount;
+            miscBalance -= amount;
+            updateBalancesBasedOnAtb(currentAtb, miscBalance);
+
+            // Add reimbursement transaction to the "Reimbursement" card and PTC
+            addReimbursementTransaction(reimburserName, transactionName, amount);
+            addTransactionToPrevious(amount, `Reimbursement from ${reimburserName}`, new Date().toLocaleDateString(), "red");
+
         } else if (category === "Gas" || category === "Misc") {
             // Handle regular transactions (Gas, Misc)
-            let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
             currentAtb -= amount;
-            updateBalancesBasedOnAtb(currentAtb);
+            if (category === "Misc") miscBalance -= amount;
+            updateBalancesBasedOnAtb(currentAtb, miscBalance);
 
-            addTransactionToPrevious(amount, category, new Date().toLocaleDateString());
+            addTransactionToPrevious(amount, category, new Date().toLocaleDateString(), "red");
         }
 
         document.getElementById("transactionModal").style.display = "none";
@@ -28,26 +35,12 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
     }
 });
 
-document.getElementById("updateTaxesBtn").addEventListener('click', function () {
-    const savings = parseFloat(document.getElementById("taxSavings").value.replace('%', ''));
-    const socialSecurity = parseFloat(document.getElementById("taxSS").value.replace('%', ''));
-    const medicare = parseFloat(document.getElementById("taxMedicare").value.replace('%', ''));
-    const federalTax = parseFloat(document.getElementById("taxFederal").value.replace('%', ''));
-    const stateTax = parseFloat(document.getElementById("taxState").value.replace('%', ''));
-    const countyTax = parseFloat(document.getElementById("taxCounty").value.replace('%', ''));
-
-    if (!isNaN(savings) && !isNaN(socialSecurity) && !isNaN(medicare) && !isNaN(federalTax) && !isNaN(stateTax) && !isNaN(countyTax)) {
-        document.getElementById("taxModal").style.display = "none";
-    } else {
-        alert("Please enter valid percentages.");
-    }
-});
-
 document.getElementById("updateAtbBtn").addEventListener('click', function () {
     const newAtb = parseFloat(document.getElementById("atbAmount").value);
+    let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
     if (!isNaN(newAtb)) {
         // Update ATB and recalculate balances
-        updateBalancesBasedOnAtb(newAtb);
+        updateBalancesBasedOnAtb(newAtb, miscBalance);
         document.getElementById("atbModal").style.display = "none";
     } else {
         alert("Please enter a valid amount.");
@@ -61,13 +54,14 @@ document.getElementById("addPaydayBtn").addEventListener('click', function () {
     if (!isNaN(payAmount) && payDate) {
         // Update ATB by adding the payday amount
         let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
+        let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
         currentAtb += payAmount;
 
         // Recalculate and update balances based on the new ATB
-        updateBalancesBasedOnAtb(currentAtb);
+        updateBalancesBasedOnAtb(currentAtb, miscBalance);
         
         // Add payday transaction to the "Previous Transactions" card
-        addTransactionToPrevious(payAmount, "Payday", payDate);
+        addTransactionToPrevious(payAmount, "Payday", payDate, "green");
 
         document.getElementById("paydayModal").style.display = "none";
     } else {
@@ -75,19 +69,30 @@ document.getElementById("addPaydayBtn").addEventListener('click', function () {
     }
 });
 
-// Adds a reimbursement transaction to the "Reimbursements" card with close functionality
 function addReimbursementTransaction(name, reason, amount) {
     const reimbursementCard = document.getElementById("reimbursementContent");
     const newReimbursement = document.createElement('div');
 
     newReimbursement.innerHTML = `
         <p>${name} - ${reason}: $${amount.toFixed(2)} 
-        <button class="close-reimbursement">Close</button></p>
+        <button class="close-reimbursement" style="background-color: green; color: white;">Close</button></p>
     `;
     
     // Add close functionality to the new reimbursement
     newReimbursement.querySelector('.close-reimbursement').addEventListener('click', function () {
-        newReimbursement.remove();  // Removes the reimbursement when the close button is clicked
+        let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
+        let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
+
+        // Add the reimbursement amount back to ATB and Misc
+        currentAtb += amount;
+        miscBalance += amount;
+        updateBalancesBasedOnAtb(currentAtb, miscBalance);
+
+        // Add positive transaction to the Previous Transactions Card (PTC)
+        addTransactionToPrevious(amount, `Reimbursement Closed: ${name}`, new Date().toLocaleDateString(), "green");
+
+        // Remove the reimbursement from the UI
+        newReimbursement.remove();
     });
 
     reimbursementCard.appendChild(newReimbursement);
