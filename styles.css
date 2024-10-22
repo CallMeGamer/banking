@@ -123,7 +123,7 @@ header {
 
 .modal-content {
     background-color: white;
-    margin: 15% auto;
+    margin: auto; /* Center the modal */
     padding: 20px;
     border-radius: 10px;
     width: 300px;
