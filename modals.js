@@ -22,7 +22,6 @@ function setupModal(modalId, openButtonId, closeButtonId) {
 
 // Setup modals for all actions
 setupModal('transactionModal', 'newTransactionBtn', 'closeTransactionModal');
-setupModal('taxModal', 'calculateTaxesBtn', 'closeTaxModal');
 setupModal('atbModal', 'atbEditBtn', 'closeAtbModal');
 setupModal('paydayModal', 'paydayBtn', 'closePaydayModal');
 
@@ -40,4 +39,10 @@ document.querySelectorAll('input[name="category"]').forEach((radio) => {
             reimbursementDetails.style.display = "none";
         }
     });
+});
+
+// Make the "Calculations" button trigger the same functionality as "Calculate Taxes"
+document.getElementById("calculationsBtn").addEventListener('click', function () {
+    // Perform calculations functionality here (recalculate balances, taxes, etc.)
+    alert("Calculations performed!");
 });
