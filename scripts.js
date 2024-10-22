@@ -1,23 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Firebase Configuration (assuming this is already initialized)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js";
-    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyAoj9XAvXwbUp5Ak0aKrQp3ctkfRi3zYx0",
-        authDomain: "cmg-banking.firebaseapp.com",
-        databaseURL: "https://cmg-banking-default-rtdb.firebaseio.com",
-        projectId: "cmg-banking",
-        storageBucket: "cmg-banking.appspot.com",
-        messagingSenderId: "690885218349",
-        appId: "1:690885218349:web:e7219f3b8d817ddc3fa8a4"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-
     // Sidebar toggle functionality
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
@@ -29,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Modal functionality for all buttons
+    // Modal functionality for opening/closing modals
     function setupModal(modalId, openButtonId, closeButtonId) {
         const modal = document.getElementById(modalId);
         const openButton = document.getElementById(openButtonId);
@@ -72,52 +54,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Add Transaction Logic
+    // Transaction Handling Logic
     document.getElementById("addTransactionBtn").addEventListener('click', function () {
         const amount = parseFloat(document.getElementById("transactionAmount").value);
         const category = document.querySelector('input[name="category"]:checked').value;
 
         if (!isNaN(amount)) {
-            const balanceRef = ref(database, 'Balances');
-            onValue(balanceRef, (snapshot) => {
-                let balances = snapshot.val();
-                if (category === "Gas") {
-                    balances.Gas -= amount;
-                } else if (category === "Misc") {
-                    balances.Misc -= amount;
-                } else if (category === "Reimbursement") {
-                    const reimburserName = document.getElementById("reimburserName").value;
-                    const transactionName = document.getElementById("transactionName").value;
-                    if (reimburserName && transactionName) {
-                        if (!balances.Reimbursement) balances.Reimbursement = [];
-                        balances.Reimbursement.push({
-                            name: reimburserName,
-                            transaction: transactionName,
-                            amount: amount
-                        });
-                    }
-                }
-                set(balanceRef, balances);
-                alert("Transaction added successfully!");
-                document.getElementById("transactionModal").style.display = "none";
-            });
-        } else {
-            alert("Please enter a valid amount.");
-        }
-    });
-
-    // Update ATB Logic
-    document.getElementById("updateAtbBtn").addEventListener('click', function () {
-        const newAtb = parseFloat(document.getElementById("atbAmount").value);
-        if (!isNaN(newAtb)) {
-            const balanceRef = ref(database, 'Balances');
-            onValue(balanceRef, (snapshot) => {
-                let balances = snapshot.val();
-                balances.ATB = newAtb;
-                set(balanceRef, balances);
-                alert("ATB updated successfully!");
-                document.getElementById("atbModal").style.display = "none";
-            });
+            alert(`Transaction added for ${category}: $${amount}`);
+            document.getElementById("transactionModal").style.display = "none";
         } else {
             alert("Please enter a valid amount.");
         }
@@ -133,16 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const countyTax = parseFloat(document.getElementById("taxCounty").value.replace('%', ''));
 
         if (!isNaN(savings) && !isNaN(socialSecurity) && !isNaN(medicare) && !isNaN(federalTax) && !isNaN(stateTax) && !isNaN(countyTax)) {
-            const calculationsRef = ref(database, 'Calculations');
-            set(calculationsRef, {
-                Savings: savings,
-                SocialSecurity: socialSecurity,
-                Medicare: medicare,
-                FederalTax: federalTax,
-                StateTax: stateTax,
-                CountyTax: countyTax
-            });
-
             alert("Taxes updated successfully!");
             document.getElementById("taxModal").style.display = "none";
         } else {
@@ -150,19 +84,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Payday Modal Logic
+    // Update ATB Logic
+    document.getElementById("updateAtbBtn").addEventListener('click', function () {
+        const newAtb = parseFloat(document.getElementById("atbAmount").value);
+        if (!isNaN(newAtb)) {
+            alert(`ATB updated to $${newAtb}`);
+            document.getElementById("atbModal").style.display = "none";
+        } else {
+            alert("Please enter a valid amount.");
+        }
+    });
+
+    // Add Payday Logic
     document.getElementById("addPaydayBtn").addEventListener('click', function () {
         const payAmount = parseFloat(document.getElementById("payAmount").value);
         const payDate = document.getElementById("payDate").value;
 
         if (!isNaN(payAmount) && payDate) {
-            const payRef = ref(database, 'Paychecks');
-            set(payRef, {
-                amount: payAmount,
-                date: payDate
-            });
-
-            alert("Payday added successfully!");
+            alert(`Payday added: $${payAmount} on ${payDate}`);
             document.getElementById("paydayModal").style.display = "none";
         } else {
             alert("Please enter a valid pay amount and date.");
