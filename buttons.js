@@ -77,32 +77,14 @@ document.getElementById("addPaydayBtn").addEventListener('click', function () {
     }
 });
 
-function addReimbursementTransaction(name, reason, amount) {
-    const reimbursementCard = document.getElementById("reimbursementContent");
-    const newReimbursement = document.createElement('div');
+// Refresh Balances functionality
+document.getElementById("refreshBalances").addEventListener("click", function () {
+    let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
+    let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
+    let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
 
-    newReimbursement.innerHTML = `
-        <p>${name} - ${reason}: $${amount.toFixed(2)} 
-        <button class="close-reimbursement" style="background-color: green; color: white;">Close</button></p>
-    `;
-    
-    // Add close functionality to the new reimbursement
-    newReimbursement.querySelector('.close-reimbursement').addEventListener('click', function () {
-        let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
-        let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
-        let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
+    // Recalculate and update balances
+    updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
 
-        // Add the reimbursement amount back to ATB and Misc
-        currentAtb += amount;
-        miscBalance += amount;
-        updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
-
-        // Add positive transaction to the Previous Transactions Card (PTC)
-        addTransactionToPrevious(amount, `Reimbursement Closed: ${name}`, new Date().toLocaleDateString(), "green");
-
-        // Remove the reimbursement from the UI
-        newReimbursement.remove();
-    });
-
-    reimbursementCard.appendChild(newReimbursement);
-}
+    alert("Balances refreshed successfully!");
+});
