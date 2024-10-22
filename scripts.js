@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Firebase Configuration
+    // Firebase Configuration (assuming this is already initialized)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js";
     import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js";
@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth();
     const database = getDatabase(app);
 
     // Sidebar toggle functionality
@@ -30,35 +29,32 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Handle modals for new transaction, ATB, payday, etc.
-    const newTransactionBtn = document.getElementById("newTransactionBtn");
-    const transactionModal = document.getElementById("transactionModal");
-    const closeTransactionModal = document.getElementById("closeTransactionModal");
+    // Modal functionality for all buttons
+    function setupModal(modalId, openButtonId, closeButtonId) {
+        const modal = document.getElementById(modalId);
+        const openButton = document.getElementById(openButtonId);
+        const closeButton = document.getElementById(closeButtonId);
 
-    const calculateTaxesBtn = document.getElementById("calculateTaxesBtn");
-    const taxModal = document.getElementById("taxModal");
-    const closeTaxModal = document.getElementById("closeTaxModal");
+        openButton.addEventListener('click', function () {
+            modal.style.display = "block";
+        });
 
-    const atbEditBtn = document.getElementById("atbEditBtn");
-    const atbModal = document.getElementById("atbModal");
-    const closeAtbModal = document.getElementById("closeAtbModal");
+        closeButton.addEventListener('click', function () {
+            modal.style.display = "none";
+        });
 
-    const paydayBtn = document.getElementById("paydayBtn");
-    const paydayModal = document.getElementById("paydayModal");
-    const closePaydayModal = document.getElementById("closePaydayModal");
+        window.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+    }
 
-    // Show modals
-    newTransactionBtn.addEventListener('click', () => transactionModal.style.display = "block");
-    closeTransactionModal.addEventListener('click', () => transactionModal.style.display = "none");
-
-    calculateTaxesBtn.addEventListener('click', () => taxModal.style.display = "block");
-    closeTaxModal.addEventListener('click', () => taxModal.style.display = "none");
-
-    atbEditBtn.addEventListener('click', () => atbModal.style.display = "block");
-    closeAtbModal.addEventListener('click', () => atbModal.style.display = "none");
-
-    paydayBtn.addEventListener('click', () => paydayModal.style.display = "block");
-    closePaydayModal.addEventListener('click', () => paydayModal.style.display = "none");
+    // Setup modals for all actions
+    setupModal('transactionModal', 'newTransactionBtn', 'closeTransactionModal');
+    setupModal('taxModal', 'calculateTaxesBtn', 'closeTaxModal');
+    setupModal('atbModal', 'atbEditBtn', 'closeAtbModal');
+    setupModal('paydayModal', 'paydayBtn', 'closePaydayModal');
 
     // Reimbursement logic (show/hide fields)
     const reimbursementRadio = document.getElementById("reimbursementRadio");
@@ -76,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Handle Transaction Calculations
+    // Add Transaction Logic
     document.getElementById("addTransactionBtn").addEventListener('click', function () {
         const amount = parseFloat(document.getElementById("transactionAmount").value);
         const category = document.querySelector('input[name="category"]:checked').value;
@@ -92,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else if (category === "Reimbursement") {
                     const reimburserName = document.getElementById("reimburserName").value;
                     const transactionName = document.getElementById("transactionName").value;
-                    // Add the reimbursement details to the database
                     if (reimburserName && transactionName) {
                         if (!balances.Reimbursement) balances.Reimbursement = [];
                         balances.Reimbursement.push({
@@ -104,14 +99,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 set(balanceRef, balances);
                 alert("Transaction added successfully!");
-                transactionModal.style.display = "none";
+                document.getElementById("transactionModal").style.display = "none";
             });
         } else {
             alert("Please enter a valid amount.");
         }
     });
 
-    // Update Taxes
+    // Update ATB Logic
+    document.getElementById("updateAtbBtn").addEventListener('click', function () {
+        const newAtb = parseFloat(document.getElementById("atbAmount").value);
+        if (!isNaN(newAtb)) {
+            const balanceRef = ref(database, 'Balances');
+            onValue(balanceRef, (snapshot) => {
+                let balances = snapshot.val();
+                balances.ATB = newAtb;
+                set(balanceRef, balances);
+                alert("ATB updated successfully!");
+                document.getElementById("atbModal").style.display = "none";
+            });
+        } else {
+            alert("Please enter a valid amount.");
+        }
+    });
+
+    // Update Taxes Logic
     document.getElementById("updateTaxesBtn").addEventListener('click', function () {
         const savings = parseFloat(document.getElementById("taxSavings").value.replace('%', ''));
         const socialSecurity = parseFloat(document.getElementById("taxSS").value.replace('%', ''));
@@ -132,42 +144,29 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             alert("Taxes updated successfully!");
-            taxModal.style.display = "none";
+            document.getElementById("taxModal").style.display = "none";
         } else {
             alert("Please enter valid percentages.");
         }
     });
 
-    // Update ATB
-    document.getElementById("updateAtbBtn").addEventListener('click', function () {
-        const newAtb = parseFloat(document.getElementById("atbAmount").value);
-        if (!isNaN(newAtb)) {
-            const balanceRef = ref(database, 'Balances');
-            onValue(balanceRef, (snapshot) => {
-                let balances = snapshot.val();
-                balances.ATB = newAtb;
-                set(balanceRef, balances);
-                alert("ATB updated successfully!");
-                atbModal.style.display = "none";
+    // Payday Modal Logic
+    document.getElementById("addPaydayBtn").addEventListener('click', function () {
+        const payAmount = parseFloat(document.getElementById("payAmount").value);
+        const payDate = document.getElementById("payDate").value;
+
+        if (!isNaN(payAmount) && payDate) {
+            const payRef = ref(database, 'Paychecks');
+            set(payRef, {
+                amount: payAmount,
+                date: payDate
             });
+
+            alert("Payday added successfully!");
+            document.getElementById("paydayModal").style.display = "none";
         } else {
-            alert("Please enter a valid amount.");
+            alert("Please enter a valid pay amount and date.");
         }
     });
 
-    // Close modals if clicking outside the modal content
-    window.addEventListener('click', function (event) {
-        if (event.target === transactionModal) {
-            transactionModal.style.display = "none";
-        }
-        if (event.target === taxModal) {
-            taxModal.style.display = "none";
-        }
-        if (event.target === atbModal) {
-            atbModal.style.display = "none";
-        }
-        if (event.target === paydayModal) {
-            paydayModal.style.display = "none";
-        }
-    });
 });
