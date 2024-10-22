@@ -10,16 +10,16 @@
 <body>
     <header>
         <h1>Welcome Back, Gavin!</h1>
-        <div class="version">v1.4</div> <!-- Updated Version Control -->
+        <div class="version">v1.5</div> <!-- Updated Version Control -->
     </header>
 
     <!-- Sidebar Navbar -->
     <nav class="sidebar" id="sidebar" style="left: -200px;">
         <div class="toggle-btn" id="sidebarToggle">☰</div>
         <ul class="nav-links">
-            <li><a href="#">Calculations</a></li>
-            <li><a href="#">ATB Edit</a></li>
-            <li><a href="#">Payday</a></li>
+            <li><a href="#" id="calculationsBtn">Calculations</a></li>
+            <li><a href="#" id="atbEditBtn">ATB Edit</a></li>
+            <li><a href="#" id="paydayBtn">Payday</a></li>
         </ul>
     </nav>
 
@@ -80,7 +80,7 @@
             <span class="close" id="closeTransactionModal">&times;</span>
             <h3>New Negative Transaction</h3>
             <label for="transactionAmount">$:</label>
-            <input type="number" id="transactionAmount" placeholder="Enter amount">
+            <input type="number" id="transactionAmount" placeholder="Enter amount" class="styled-input">
             <div>
                 <label><input type="radio" name="category" value="Misc" checked> Misc</label>
                 <label><input type="radio" name="category" value="Gas"> Gas</label>
@@ -95,13 +95,37 @@
         <div class="modal-content">
             <span class="close" id="closeTaxModal">&times;</span>
             <h3>Calculate Taxes</h3>
-            <label>Savings:</label><input type="text" id="taxSavings" value="50%"><br>
-            <label>Social Security:</label><input type="text" id="taxSS" value="6.2%"><br>
-            <label>Medicare:</label><input type="text" id="taxMedicare" value="1.45%"><br>
-            <label>Federal Tax:</label><input type="text" id="taxFederal" value="10%"><br>
-            <label>State Tax:</label><input type="text" id="taxState" value="5%"><br>
-            <label>County Tax:</label><input type="text" id="taxCounty" value="1%"><br>
+            <label>Savings:</label><input type="text" id="taxSavings" value="50%" class="styled-input"><br>
+            <label>Social Security:</label><input type="text" id="taxSS" value="6.2%" class="styled-input"><br>
+            <label>Medicare:</label><input type="text" id="taxMedicare" value="1.45%" class="styled-input"><br>
+            <label>Federal Tax:</label><input type="text" id="taxFederal" value="10%" class="styled-input"><br>
+            <label>State Tax:</label><input type="text" id="taxState" value="5%" class="styled-input"><br>
+            <label>County Tax:</label><input type="text" id="taxCounty" value="1%" class="styled-input"><br>
             <button class="btn" id="updateTaxesBtn">Update</button>
+        </div>
+    </div>
+
+    <!-- ATB Edit Modal -->
+    <div id="atbModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeAtbModal">&times;</span>
+            <h3>Edit Account Total Balance (ATB)</h3>
+            <label for="atbAmount">Enter new ATB:</label>
+            <input type="number" id="atbAmount" placeholder="Enter new balance" class="styled-input">
+            <button class="btn" id="updateAtbBtn">Update</button>
+        </div>
+    </div>
+
+    <!-- Payday Modal -->
+    <div id="paydayModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closePaydayModal">&times;</span>
+            <h3>New Payday</h3>
+            <label for="payAmount">Enter Pay Amount:</label>
+            <input type="number" id="payAmount" placeholder="Enter pay amount" class="styled-input">
+            <label for="payDate">Pay Date:</label>
+            <input type="date" id="payDate" class="styled-input">
+            <button class="btn" id="addPaydayBtn">Add Payday</button>
         </div>
     </div>
 
