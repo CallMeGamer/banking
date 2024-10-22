@@ -1,146 +1,160 @@
-// Ensure DOM Content is fully loaded before manipulating elements
-document.addEventListener('DOMContentLoaded', function () {
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
 
-    // Sidebar toggle functionality
-    document.getElementById('sidebarToggle').onclick = function() {
-        const sidebar = document.getElementById('sidebar');
-        if (sidebar.style.left === '0px') {
-            sidebar.style.left = '-200px';
-        } else {
-            sidebar.style.left = '0px';
-        }
-    };
+/* Header */
+header {
+    background-color: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    position: relative;
+}
 
-    // Modal functionality for New Transaction
-    const newTransactionBtn = document.getElementById("newTransactionBtn");
-    const transactionModal = document.getElementById("transactionModal");
-    const closeTransactionModal = document.getElementById("closeTransactionModal");
+.version {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: #ddd;
+}
 
-    newTransactionBtn.onclick = function() {
-        transactionModal.style.display = "block";
-    };
+/* Sidebar Navigation */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -200px; /* Hidden by default */
+    width: 200px;
+    height: 100%;
+    background-color: #34495e;
+    padding-top: 60px;
+    transition: 0.3s;
+}
 
-    closeTransactionModal.onclick = function() {
-        transactionModal.style.display = "none";
-    };
+.sidebar .nav-links {
+    list-style-type: none;
+    padding: 0;
+}
 
-    // Modal functionality for Taxes
-    const calculateTaxesBtn = document.getElementById("calculateTaxesBtn");
-    const taxModal = document.getElementById("taxModal");
-    const closeTaxModal = document.getElementById("closeTaxModal");
+.sidebar .nav-links li {
+    padding: 10px;
+    text-align: center;
+}
 
-    calculateTaxesBtn.onclick = function() {
-        taxModal.style.display = "block";
-    };
+.sidebar .nav-links li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    transition: 0.3s;
+}
 
-    closeTaxModal.onclick = function() {
-        taxModal.style.display = "none";
-    };
+.sidebar .nav-links li a:hover {
+    background-color: #16a085;
+}
 
-    // Firebase Setup and Authentication
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js";
-    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js";
+.toggle-btn {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    font-size: 30px;
+    cursor: pointer;
+}
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAoj9XAvXwbUp5Ak0aKrQp3ctkfRi3zYx0",
-        authDomain: "cmg-banking.firebaseapp.com",
-        databaseURL: "https://cmg-banking-default-rtdb.firebaseio.com",
-        projectId: "cmg-banking",
-        storageBucket: "cmg-banking.appspot.com",
-        messagingSenderId: "690885218349",
-        appId: "1:690885218349:web:e7219f3b8d817ddc3fa8a4"
-    };
+/* Dashboard Layout */
+.dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 50px 20px;
+    margin-left: 200px; /* Adjust according to sidebar width */
+}
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth();
-    const database = getDatabase(app);
+.card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    flex: 1;
+    max-width: 300px;
+    min-width: 200px;
+}
 
-    signInWithEmailAndPassword(auth, "user-email@example.com", "user-password")
-        .then(() => {
-            loadDashboardData();
-        })
-        .catch((error) => {
-            console.error("Error signing in: ", error);
-        });
+.card h2 {
+    font-size: 20px;
+    color: #2c3e50;
+}
 
-    function loadDashboardData() {
-        const balanceRef = ref(database, 'Balances');
-        const transactionsRef = ref(database, 'Transactions');
+.balance {
+    font-size: 36px;
+    color: #2980b9;
+}
 
-        // Fetch and display balances
-        onValue(balanceRef, (snapshot) => {
-            const balances = snapshot.val();
-            document.getElementById("atb").innerText = "$" + balances.ATB;
-            document.getElementById("gasBalance").innerText = balances.Gas;
-            document.getElementById("insuranceBalance").innerText = balances.Insurance;
-            document.getElementById("savingsBalance").innerText = balances.Savings;
-            document.getElementById("miscBalance").innerText = balances.Misc;
-            document.getElementById("miscSpending").innerText = balances.Misc;
-        });
+.last-transactions ul {
+    list-style-type: none;
+    padding: 0;
+}
 
-        // Fetch and display last 6 transactions
-        onValue(transactionsRef, (snapshot) => {
-            const transactions = snapshot.val();
-            let transactionList = "";
-            const lastTransactions = transactions.slice(-6);
-            lastTransactions.forEach(transaction => {
-                transactionList += `<li>${transaction.Name}: <span>-$${transaction.Amount}</span></li>`;
-            });
-            document.getElementById("lastTransactions").innerHTML = transactionList;
-        });
-    }
+.last-transactions li {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
 
-    // Add Transaction functionality
-    document.getElementById("addTransactionBtn").onclick = () => {
-        const amount = parseFloat(document.getElementById("transactionAmount").value);
-        const category = document.querySelector('input[name="category"]:checked').value;
-        
-        if (!isNaN(amount)) {
-            const balanceRef = ref(database, 'Balances');
-            onValue(balanceRef, (snapshot) => {
-                let balances = snapshot.val();
-                if (category === "Gas") {
-                    balances.Gas -= amount;
-                } else if (category === "Misc") {
-                    balances.Misc -= amount;
-                } else if (category === "Reimbursement") {
-                    balances.Reimbursement -= amount;
-                }
-                set(balanceRef, balances);
-                alert("Transaction added successfully!");
-                transactionModal.style.display = "none";
-            });
-        } else {
-            alert("Please enter a valid amount.");
-        }
-    };
+.last-transactions li span {
+    color: red;
+    font-weight: bold;
+}
 
-    // Update Taxes functionality
-    document.getElementById("updateTaxesBtn").onclick = () => {
-        const savings = parseFloat(document.getElementById("taxSavings").value.replace('%', ''));
-        const socialSecurity = parseFloat(document.getElementById("taxSS").value.replace('%', ''));
-        const medicare = parseFloat(document.getElementById("taxMedicare").value.replace('%', ''));
-        const federalTax = parseFloat(document.getElementById("taxFederal").value.replace('%', ''));
-        const stateTax = parseFloat(document.getElementById("taxState").value.replace('%', ''));
-        const countyTax = parseFloat(document.getElementById("taxCounty").value.replace('%', ''));
+/* Modal Styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Modal background dim */
+}
 
-        if (!isNaN(savings) && !isNaN(socialSecurity) && !isNaN(medicare) && !isNaN(federalTax) && !isNaN(stateTax) && !isNaN(countyTax)) {
-            const calculationsRef = ref(database, 'Calculations');
-            set(calculationsRef, {
-                Savings: savings,
-                SocialSecurity: socialSecurity,
-                Medicare: medicare,
-                FederalTax: federalTax,
-                StateTax: stateTax,
-                CountyTax: countyTax
-            });
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    position: relative;
+}
 
-            alert("Taxes updated successfully!");
-            taxModal.style.display = "none";
-        } else {
-            alert("Please enter valid percentages.");
-        }
-    };
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
 
-});
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Button Styles */
+.btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+}
