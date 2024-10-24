@@ -12,17 +12,12 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
         let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
 
         if (category === "Reimbursement" && reimburserName && transactionName) {
-            // Subtract from ATB and Misc
             currentAtb -= amount;
             miscBalance -= amount;
             updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
-
-            // Add reimbursement transaction to the "Reimbursement" card and PTC
             addReimbursementTransaction(reimburserName, transactionName, amount);
             addTransactionToPrevious(amount, `Reimbursement from ${reimburserName}`, new Date().toLocaleDateString(), "red");
-
         } else if (category === "Gas") {
-            // Deduct from Gas and ATB, and take overflow from Misc if necessary
             if (gasBalance >= amount) {
                 currentAtb -= amount;
                 gasBalance -= amount;
@@ -30,7 +25,6 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
                 const remainingGas = gasBalance;
                 gasBalance = 0;
                 const miscRequired = amount - remainingGas;
-
                 if (miscBalance >= miscRequired) {
                     miscBalance -= miscRequired;
                     currentAtb -= amount;
@@ -41,7 +35,6 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
             }
             updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
             addTransactionToPrevious(amount, "Gas", new Date().toLocaleDateString(), "red");
-
         } else if (category === "Misc") {
             currentAtb -= amount;
             miscBalance -= amount;
@@ -60,7 +53,6 @@ document.getElementById("updateAtbBtn").addEventListener('click', function () {
     let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
     let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
     if (!isNaN(newAtb)) {
-        // Update ATB without recalculating balances
         updateBalancesBasedOnAtb(newAtb, miscBalance, gasBalance);
         document.getElementById("atbModal").style.display = "none";
     } else {
@@ -73,12 +65,10 @@ document.getElementById("addPaydayBtn").addEventListener('click', function () {
     const payDate = document.getElementById("payDate").value;
 
     if (!isNaN(payAmount) && payDate) {
-        // Update ATB by adding the payday amount
         let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
         let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
         let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
 
-        // Deduct for gas, insurance, and savings, and calculate misc
         const gasAllocation = 50;
         const insuranceAllocation = 65;
         const savingsAllocation = (payAmount - gasAllocation - insuranceAllocation) * 0.5;
@@ -90,10 +80,7 @@ document.getElementById("addPaydayBtn").addEventListener('click', function () {
         miscBalance += miscAddition;
         currentAtb += payAmount;
 
-        // Recalculate and update balances
         updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance, insuranceBalance, savingsBalance);
-        
-        // Add payday transaction to the "Previous Transactions" card
         addTransactionToPrevious(payAmount, "Payday", payDate, "green");
 
         document.getElementById("paydayModal").style.display = "none";
