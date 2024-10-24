@@ -1,13 +1,10 @@
 // calculations.js
 
-function updateBalancesBasedOnAtb(atb, misc, gas) {
-    const insuranceAllocation = 65;  // $65 for Insurance
-    const savingsAllocation = atb * 0.5;  // 50% to Savings
-
-    // Update UI
+function updateBalancesBasedOnAtb(atb, misc, gas, insurance = 0, savings = 0) {
+    // Update UI for balances
     document.getElementById("gasBalance").textContent = gas.toFixed(2);
-    document.getElementById("insuranceBalance").textContent = insuranceAllocation.toFixed(2);
-    document.getElementById("savingsBalance").textContent = savingsAllocation.toFixed(2);
+    document.getElementById("insuranceBalance").textContent = insurance.toFixed(2);
+    document.getElementById("savingsBalance").textContent = savings.toFixed(2);
     document.getElementById("miscBalance").textContent = misc.toFixed(2);
 
     // Update ATB
