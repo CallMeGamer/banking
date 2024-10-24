@@ -13,7 +13,7 @@
 <body>
     <header>
         <h1>Welcome Back, Gavin!</h1>
-        <div class="version">v1.13</div> <!-- Updated Version Control -->
+        <div class="version">v1.14</div> <!-- Updated Version Control -->
     </header>
 
     <!-- Sidebar Navbar -->
@@ -36,7 +36,6 @@
         <!-- Balances Card -->
         <div class="card">
             <h2>Balances 
-                <!-- Refresh Icon in the top right of the Balances Card -->
                 <span id="refreshBalances" style="float: right; cursor: pointer;">&#x21bb;</span>
             </h2>
             <ul>
@@ -86,12 +85,11 @@
                 <label><input type="radio" name="category" value="Gas"> Gas</label>
                 <label><input type="radio" name="category" value="Reimbursement" id="reimbursementRadio"> Reimbursement</label>
             </div>
-            <!-- Reimbursement-specific fields (hidden by default) -->
             <div id="reimbursementDetails" style="display: none;">
                 <label for="reimburserName">Reimburser Name:</label>
-                <input type="text" id="reimburserName" placeholder="Enter reimburser's name" class="styled-input">
+                <input type="text" id="reimburserName" class="styled-input">
                 <label for="transactionName">Transaction Name:</label>
-                <input type="text" id="transactionName" placeholder="Enter transaction name" class="styled-input">
+                <input type="text" id="transactionName" class="styled-input">
             </div>
             <button class="btn" id="addTransactionBtn">Add</button>
         </div>
@@ -103,7 +101,7 @@
             <span class="close" id="closeAtbModal">&times;</span>
             <h3>Edit Account Total Balance (ATB)</h3>
             <label for="atbAmount">Enter new ATB:</label>
-            <input type="number" id="atbAmount" placeholder="Enter new balance" class="styled-input">
+            <input type="number" id="atbAmount" class="styled-input">
             <button class="btn" id="updateAtbBtn">Update</button>
         </div>
     </div>
@@ -114,25 +112,10 @@
             <span class="close" id="closePaydayModal">&times;</span>
             <h3>New Payday</h3>
             <label for="payAmount">Enter Pay Amount:</label>
-            <input type="number" id="payAmount" placeholder="Enter pay amount" class="styled-input">
+            <input type="number" id="payAmount" class="styled-input">
             <label for="payDate">Pay Date:</label>
             <input type="date" id="payDate" class="styled-input">
             <button class="btn" id="addPaydayBtn">Add Payday</button>
-        </div>
-    </div>
-
-    <!-- Calculations Modal -->
-    <div id="calculationsModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close" id="closeCalculationsModal">&times;</span>
-            <h3>Edit Calculations</h3>
-            <label>Savings (%):</label>
-            <input type="number" id="calcSavings" class="styled-input"><br>
-            <label>Gas:</label>
-            <input type="number" id="calcGas" class="styled-input" value="50"><br>
-            <label>Insurance:</label>
-            <input type="number" id="calcInsurance" class="styled-input" value="65"><br>
-            <button class="btn" id="updateCalculationsBtn">Update</button>
         </div>
     </div>
 
