@@ -12,10 +12,15 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
         let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
 
         if (category === "Reimbursement" && reimburserName && transactionName) {
+            // Subtract from ATB and Misc
             currentAtb -= amount;
             miscBalance -= amount;
             updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
+
+            // Add reimbursement transaction to the "Reimbursement" card
             addReimbursementTransaction(reimburserName, transactionName, amount);
+
+            // Add reimbursement to the Previous Transactions Card (PTC)
             addTransactionToPrevious(amount, `Reimbursement from ${reimburserName}`, new Date().toLocaleDateString(), "red");
         } else if (category === "Gas") {
             if (gasBalance >= amount) {
@@ -48,56 +53,42 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
     }
 });
 
-document.getElementById("updateAtbBtn").addEventListener('click', function () {
-    const newAtb = parseFloat(document.getElementById("atbAmount").value);
-    let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
-    let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
-    if (!isNaN(newAtb)) {
-        updateBalancesBasedOnAtb(newAtb, miscBalance, gasBalance);
-        document.getElementById("atbModal").style.display = "none";
-    } else {
-        alert("Please enter a valid amount.");
-    }
+// Ensure the Calculations tab works
+document.getElementById("calculationsBtn").addEventListener('click', function () {
+    document.getElementById('calculationsModal').style.display = 'block';
 });
 
-document.getElementById("addPaydayBtn").addEventListener('click', function () {
-    const payAmount = parseFloat(document.getElementById("payAmount").value);
-    const payDate = document.getElementById("payDate").value;
+// Close calculations modal
+document.getElementById("closeCalculationsModal").addEventListener('click', function () {
+    document.getElementById('calculationsModal').style.display = 'none';
+});
 
-    if (!isNaN(payAmount) && payDate) {
+// Reimbursement logic - display new reimbursement in the Reimbursements card
+function addReimbursementTransaction(name, reason, amount) {
+    const reimbursementCard = document.getElementById("reimbursementContent");
+    const newReimbursement = document.createElement('div');
+
+    newReimbursement.innerHTML = `
+        <p>${name} - ${reason}: $${amount.toFixed(2)} 
+        <button class="close-reimbursement" style="background-color: green; color: white;">Close</button></p>
+    `;
+    
+    // Add close functionality to the new reimbursement
+    newReimbursement.querySelector('.close-reimbursement').addEventListener('click', function () {
         let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
         let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
-        let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
 
-        // Deduct for savings first, then gas and insurance, and calculate misc
-        const savingsAllocation = payAmount * 0.5;
-        const gasAllocation = 50;
-        const insuranceAllocation = 65;
-        const miscAddition = payAmount - savingsAllocation - gasAllocation - insuranceAllocation;
+        // Add the reimbursement amount back to ATB and Misc
+        currentAtb += amount;
+        miscBalance += amount;
+        updateBalancesBasedOnAtb(currentAtb, miscBalance);
 
-        let insuranceBalance = parseFloat(document.getElementById("insuranceBalance").textContent) + insuranceAllocation;
-        let savingsBalance = parseFloat(document.getElementById("savingsBalance").textContent) + savingsAllocation;
-        gasBalance += gasAllocation;
-        miscBalance += miscAddition;
-        currentAtb += payAmount;
+        // Add positive transaction to the Previous Transactions Card (PTC)
+        addTransactionToPrevious(amount, `Reimbursement Closed: ${name}`, new Date().toLocaleDateString(), "green");
 
-        updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance, insuranceBalance, savingsBalance);
-        addTransactionToPrevious(payAmount, "Payday", payDate, "green");
-
-        document.getElementById("paydayModal").style.display = "none";
-    } else {
-        alert("Please enter a valid pay amount and date.");
-    }
-});
-
-// Reimbursement logic - show/hide reimbursement questions
-document.querySelectorAll('input[name="category"]').forEach((radio) => {
-    radio.addEventListener('change', function () {
-        const reimbursementDetails = document.getElementById('reimbursementDetails');
-        if (this.value === 'Reimbursement') {
-            reimbursementDetails.style.display = 'block';
-        } else {
-            reimbursementDetails.style.display = 'none';
-        }
+        // Remove the reimbursement from the UI
+        newReimbursement.remove();
     });
-});
+
+    reimbursementCard.appendChild(newReimbursement);
+}
