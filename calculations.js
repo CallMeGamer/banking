@@ -1,13 +1,10 @@
 // calculations.js
 
 function updateBalancesBasedOnAtb(atb, misc, gas, insurance = 0, savings = 0) {
-    // Update UI for balances
     document.getElementById("gasBalance").textContent = gas.toFixed(2);
     document.getElementById("insuranceBalance").textContent = insurance.toFixed(2);
     document.getElementById("savingsBalance").textContent = savings.toFixed(2);
     document.getElementById("miscBalance").textContent = misc.toFixed(2);
-
-    // Update ATB
     document.getElementById("atb").textContent = `$${atb.toFixed(2)}`;
 }
 
@@ -17,7 +14,6 @@ function addTransactionToPrevious(amount, name, date, color) {
 
     transactionsList.innerHTML = newTransaction + transactionsList.innerHTML;
 
-    // Keep only the last 6 transactions
     if (transactionsList.children.length > 6) {
         transactionsList.removeChild(transactionsList.lastChild);
     }
