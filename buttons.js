@@ -69,14 +69,15 @@ document.getElementById("addPaydayBtn").addEventListener('click', function () {
         let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
         let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
 
+        // Deduct for savings first, then gas and insurance, and calculate misc
+        const savingsAllocation = payAmount * 0.5;
         const gasAllocation = 50;
         const insuranceAllocation = 65;
-        const savingsAllocation = (payAmount - gasAllocation - insuranceAllocation) * 0.5;
-        const miscAddition = payAmount - gasAllocation - insuranceAllocation - savingsAllocation;
+        const miscAddition = payAmount - savingsAllocation - gasAllocation - insuranceAllocation;
 
-        gasBalance += gasAllocation;
         let insuranceBalance = parseFloat(document.getElementById("insuranceBalance").textContent) + insuranceAllocation;
         let savingsBalance = parseFloat(document.getElementById("savingsBalance").textContent) + savingsAllocation;
+        gasBalance += gasAllocation;
         miscBalance += miscAddition;
         currentAtb += payAmount;
 
@@ -87,4 +88,16 @@ document.getElementById("addPaydayBtn").addEventListener('click', function () {
     } else {
         alert("Please enter a valid pay amount and date.");
     }
+});
+
+// Reimbursement logic - show/hide reimbursement questions
+document.querySelectorAll('input[name="category"]').forEach((radio) => {
+    radio.addEventListener('change', function () {
+        const reimbursementDetails = document.getElementById('reimbursementDetails');
+        if (this.value === 'Reimbursement') {
+            reimbursementDetails.style.display = 'block';
+        } else {
+            reimbursementDetails.style.display = 'none';
+        }
+    });
 });
