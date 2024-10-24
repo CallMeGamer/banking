@@ -1,103 +1,124 @@
-// buttons.js
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="modals.js" defer></script>
+    <script src="buttons.js" defer></script>
+    <script src="calculations.js" defer></script>
+    <script src="scripts.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Welcome Back, Gavin!</h1>
+        <div class="version">v1.15</div> <!-- Updated Version Control -->
+    </header>
 
-document.getElementById("addTransactionBtn").addEventListener('click', function () {
-    const amount = parseFloat(document.getElementById("transactionAmount").value);
-    const category = document.querySelector('input[name="category"]:checked').value;
-    const reimburserName = document.getElementById("reimburserName").value;
-    const transactionName = document.getElementById("transactionName").value;
+    <!-- Sidebar Navbar -->
+    <nav class="sidebar" id="sidebar" style="left: -200px;">
+        <div class="toggle-btn" id="sidebarToggle">☰</div>
+        <ul class="nav-links">
+            <li><a href="#" id="calculationsBtn">Calculations</a></li>
+            <li><a href="#" id="atbEditBtn">ATB Edit</a></li>
+            <li><a href="#" id="paydayBtn">Payday</a></li>
+        </ul>
+    </nav>
 
-    if (!isNaN(amount)) {
-        let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
-        let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
-        let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
+    <section class="dashboard">
+        <!-- Account Total Balance -->
+        <div class="card" id="account-summary">
+            <h2>Account Total Balance (ATB):</h2>
+            <div class="balance" id="atb">$0.00</div>
+        </div>
 
-        if (category === "Reimbursement" && reimburserName && transactionName) {
-            currentAtb -= amount;
-            miscBalance -= amount;
-            updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
-            addReimbursementTransaction(reimburserName, transactionName, amount);
-            addTransactionToPrevious(amount, `Reimbursement from ${reimburserName}`, new Date().toLocaleDateString(), "red");
-        } else if (category === "Gas") {
-            if (gasBalance >= amount) {
-                currentAtb -= amount;
-                gasBalance -= amount;
-            } else {
-                const remainingGas = gasBalance;
-                gasBalance = 0;
-                const miscRequired = amount - remainingGas;
-                if (miscBalance >= miscRequired) {
-                    miscBalance -= miscRequired;
-                    currentAtb -= amount;
-                } else {
-                    alert("Insufficient funds in Gas and Misc.");
-                    return;
-                }
-            }
-            updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
-            addTransactionToPrevious(amount, "Gas", new Date().toLocaleDateString(), "red");
-        } else if (category === "Misc") {
-            currentAtb -= amount;
-            miscBalance -= amount;
-            updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
-            addTransactionToPrevious(amount, "Misc", new Date().toLocaleDateString(), "red");
-        }
+        <!-- Balances Card -->
+        <div class="card">
+            <h2>Balances 
+                <span id="refreshBalances" style="float: right; cursor: pointer;">&#x21bb;</span>
+            </h2>
+            <ul>
+                <li>Gas: $<span id="gasBalance">0.00</span></li>
+                <li>Insurance: $<span id="insuranceBalance">0.00</span></li>
+                <li>Savings: $<span id="savingsBalance">0.00</span></li>
+                <li>Misc: $<span id="miscBalance">0.00</span></li>
+            </ul>
+        </div>
 
-        document.getElementById("transactionModal").style.display = "none";
-    } else {
-        alert("Please enter a valid amount.");
-    }
-});
+        <!-- Spending Money Card (Green Font) -->
+        <div class="card" id="spending-summary">
+            <h2>Spending Money:</h2>
+            <div class="balance" id="miscBalance" style="color: green;">$0.00</div>
+        </div>
 
-document.getElementById("updateAtbBtn").addEventListener('click', function () {
-    const newAtb = parseFloat(document.getElementById("atbAmount").value);
-    let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
-    let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
-    if (!isNaN(newAtb)) {
-        updateBalancesBasedOnAtb(newAtb, miscBalance, gasBalance);
-        document.getElementById("atbModal").style.display = "none";
-    } else {
-        alert("Please enter a valid amount.");
-    }
-});
+        <!-- New Negative Transaction Card -->
+        <div class="card">
+            <h2>New Neg. Transaction</h2>
+            <p>Click "New" to create a new negative transaction.</p>
+            <button class="btn" id="newTransactionBtn">New</button>
+        </div>
 
-document.getElementById("addPaydayBtn").addEventListener('click', function () {
-    const payAmount = parseFloat(document.getElementById("payAmount").value);
-    const payDate = document.getElementById("payDate").value;
+        <!-- Reimbursement Card -->
+        <div class="card">
+            <h2>Reimbursement</h2>
+            <div id="reimbursementContent">You are not currently expecting reimbursement.</div>
+        </div>
 
-    if (!isNaN(payAmount) && payDate) {
-        let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
-        let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
-        let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
+        <!-- Last 6 Transactions -->
+        <div class="card last-transactions">
+            <h2>Last 6 Transactions</h2>
+            <ul id="lastTransactions"></ul>
+        </div>
+    </section>
 
-        // Deduct for savings first, then gas and insurance, and calculate misc
-        const savingsAllocation = payAmount * 0.5;
-        const gasAllocation = 50;
-        const insuranceAllocation = 65;
-        const miscAddition = payAmount - savingsAllocation - gasAllocation - insuranceAllocation;
+    <!-- Modals -->
+    <!-- Transaction Modal -->
+    <div id="transactionModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeTransactionModal">&times;</span>
+            <h3>New Negative Transaction</h3>
+            <label for="transactionAmount">$:</label>
+            <input type="number" id="transactionAmount" placeholder="Enter amount" class="styled-input">
+            <div>
+                <label><input type="radio" name="category" value="Misc" checked> Misc</label>
+                <label><input type="radio" name="category" value="Gas"> Gas</label>
+                <label><input type="radio" name="category" value="Reimbursement" id="reimbursementRadio"> Reimbursement</label>
+            </div>
+            <!-- Reimbursement-specific fields -->
+            <div id="reimbursementDetails" style="display: none;">
+                <label for="reimburserName">Reimburser Name:</label>
+                <input type="text" id="reimburserName" class="styled-input">
+                <label for="transactionName">Transaction Name:</label>
+                <input type="text" id="transactionName" class="styled-input">
+            </div>
+            <button class="btn" id="addTransactionBtn">Add</button>
+        </div>
+    </div>
 
-        let insuranceBalance = parseFloat(document.getElementById("insuranceBalance").textContent) + insuranceAllocation;
-        let savingsBalance = parseFloat(document.getElementById("savingsBalance").textContent) + savingsAllocation;
-        gasBalance += gasAllocation;
-        miscBalance += miscAddition;
-        currentAtb += payAmount;
+    <!-- ATB Edit Modal -->
+    <div id="atbModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeAtbModal">&times;</span>
+            <h3>Edit Account Total Balance (ATB)</h3>
+            <label for="atbAmount">Enter new ATB:</label>
+            <input type="number" id="atbAmount" class="styled-input">
+            <button class="btn" id="updateAtbBtn">Update</button>
+        </div>
+    </div>
 
-        updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance, insuranceBalance, savingsBalance);
-        addTransactionToPrevious(payAmount, "Payday", payDate, "green");
+    <!-- Payday Modal -->
+    <div id="paydayModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closePaydayModal">&times;</span>
+            <h3>New Payday</h3>
+            <label for="payAmount">Enter Pay Amount:</label>
+            <input type="number" id="payAmount" class="styled-input">
+            <label for="payDate">Pay Date:</label>
+            <input type="date" id="payDate" class="styled-input">
+            <button class="btn" id="addPaydayBtn">Add Payday</button>
+        </div>
+    </div>
 
-        document.getElementById("paydayModal").style.display = "none";
-    } else {
-        alert("Please enter a valid pay amount and date.");
-    }
-});
-
-// Reimbursement logic - show/hide reimbursement questions
-document.querySelectorAll('input[name="category"]').forEach((radio) => {
-    radio.addEventListener('change', function () {
-        const reimbursementDetails = document.getElementById('reimbursementDetails');
-        if (this.value === 'Reimbursement') {
-            reimbursementDetails.style.display = 'block';
-        } else {
-            reimbursementDetails.style.display = 'none';
-        }
-    });
-});
+</body>
+</html>
