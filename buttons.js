@@ -55,15 +55,20 @@ function updateBalances(atb, misc, gas, insurance = 0, savings = 0) {
     document.getElementById("gasBalance").textContent = gas.toFixed(2);
     document.getElementById("insuranceBalance").textContent = insurance.toFixed(2);
     document.getElementById("savingsBalance").textContent = savings.toFixed(2);
-    document.getElementById("miscBalance").textContent = misc.toFixed(2);
-    document.getElementById("atb").textContent = `$${atb.toFixed(2)}`;
 
-    // Update the Misc balance in the Spending Money Card
-    const spendingMoneyCard = document.getElementById("miscBalance"); // Refers to the Misc balance for the Spending Money card
-    spendingMoneyCard.textContent = `$${misc.toFixed(2)}`;
+    // Ensure Misc balance is valid and not NaN
+    if (isNaN(misc)) {
+        misc = 0;
+    }
+
+    // Update Misc in both the balances and spending money card
+    document.getElementById("miscBalance").textContent = misc.toFixed(2);
+    document.getElementById("spending-summary").querySelector('.balance').textContent = `$${misc.toFixed(2)}`;
+    
+    document.getElementById("atb").textContent = `$${atb.toFixed(2)}`;
 }
 
-// Function to add transaction to the Previous Transactions Card (PTC)
+// Function to add a transaction to the Previous Transactions Card (PTC)
 function addTransactionToPrevious(amount, name, date, color) {
     const transactionsList = document.getElementById("lastTransactions");
     const newTransaction = `<li>${name}: <span style="color: ${color};">$${amount.toFixed(2)}</span> (${date})</li>`;
@@ -212,6 +217,7 @@ document.getElementById("addPaydayBtn").addEventListener('click', function () {
         miscBalance += miscAddition;
         currentAtb += payAmount;
 
+        // Ensure Misc doesn't show extra $
         updateBalances(currentAtb, miscBalance, gasBalance, insuranceBalance, savingsBalance);
         addTransactionToPrevious(payAmount, "Payday", payDate, "green");
 
