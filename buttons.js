@@ -49,6 +49,7 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
             addTransactionToPrevious(amount, "Misc", new Date().toLocaleDateString(), "red");
         }
 
+        // Close modal after transaction
         document.getElementById("transactionModal").style.display = "none";
     } else {
         alert("Please enter a valid amount.");
@@ -84,6 +85,28 @@ function addReimbursementTransaction(name, reason, amount) {
     });
 
     reimbursementCard.appendChild(newReimbursement);
+}
+
+// Add transaction to the Previous Transactions Card (PTC)
+function addTransactionToPrevious(amount, name, date, color) {
+    const transactionsList = document.getElementById("lastTransactions");
+    const newTransaction = `<li>${name}: <span style="color: ${color};">$${amount.toFixed(2)}</span> (${date})</li>`;
+
+    transactionsList.innerHTML = newTransaction + transactionsList.innerHTML;
+
+    // Keep only the last 6 transactions
+    if (transactionsList.children.length > 6) {
+        transactionsList.removeChild(transactionsList.lastChild);
+    }
+}
+
+// Update Balances in ATB and other cards
+function updateBalancesBasedOnAtb(atb, misc, gas, insurance = 0, savings = 0) {
+    document.getElementById("gasBalance").textContent = gas.toFixed(2);
+    document.getElementById("insuranceBalance").textContent = insurance.toFixed(2);
+    document.getElementById("savingsBalance").textContent = savings.toFixed(2);
+    document.getElementById("miscBalance").textContent = misc.toFixed(2);
+    document.getElementById("atb").textContent = `$${atb.toFixed(2)}`;
 }
 
 // ATB Edit Button Functionality
