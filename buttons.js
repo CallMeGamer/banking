@@ -50,20 +50,20 @@ document.getElementById("closeCalculationsModal").addEventListener('click', func
     closeModal("calculationsModal");
 });
 
-// Update Balances in ATB and other cards
-function updateBalancesBasedOnAtb(atb, misc, gas, insurance = 0, savings = 0) {
+// Function to update both the Balances card and the Spending Money card
+function updateBalances(atb, misc, gas, insurance = 0, savings = 0) {
     document.getElementById("gasBalance").textContent = gas.toFixed(2);
     document.getElementById("insuranceBalance").textContent = insurance.toFixed(2);
     document.getElementById("savingsBalance").textContent = savings.toFixed(2);
     document.getElementById("miscBalance").textContent = misc.toFixed(2);
     document.getElementById("atb").textContent = `$${atb.toFixed(2)}`;
 
-    // Update Misc balance in the Spending Money Card (green font)
-    const spendingMoneyCard = document.getElementById("spending-summary").querySelector('.balance');
+    // Update the Misc balance in the Spending Money Card
+    const spendingMoneyCard = document.getElementById("miscBalance"); // Refers to the Misc balance for the Spending Money card
     spendingMoneyCard.textContent = `$${misc.toFixed(2)}`;
 }
 
-// Add transaction to the Previous Transactions Card (PTC)
+// Function to add transaction to the Previous Transactions Card (PTC)
 function addTransactionToPrevious(amount, name, date, color) {
     const transactionsList = document.getElementById("lastTransactions");
     const newTransaction = `<li>${name}: <span style="color: ${color};">$${amount.toFixed(2)}</span> (${date})</li>`;
@@ -76,11 +76,11 @@ function addTransactionToPrevious(amount, name, date, color) {
     }
 }
 
-// Reimbursement System - display new reimbursement in the Reimbursements card and PTC
+// Reimbursement System - display new reimbursement in the Reimbursement card and PTC
 function addReimbursementTransaction(name, reason, amount) {
     const reimbursementCard = document.getElementById("reimbursementContent");
 
-    // If this is the first reimbursement, remove the default message
+    // Remove default message if this is the first reimbursement
     if (reimbursementCard.innerHTML === "You are not currently expecting reimbursement.") {
         reimbursementCard.innerHTML = ''; 
     }
@@ -97,15 +97,15 @@ function addReimbursementTransaction(name, reason, amount) {
         let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
         let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
 
-        // Return reimbursement amount to ATB and Misc
+        // Return reimbursement amount to ATB and Misc balance
         currentAtb += amount;
         miscBalance += amount;
-        updateBalancesBasedOnAtb(currentAtb, miscBalance);
+        updateBalances(currentAtb, miscBalance);
 
         // Add positive transaction to PTC
         addTransactionToPrevious(amount, `Reimbursement Closed: ${name}`, new Date().toLocaleDateString(), "green");
 
-        // Remove reimbursement from UI
+        // Remove the reimbursement entry from the card
         newReimbursement.remove();
 
         // Check if there are any remaining reimbursements
@@ -133,7 +133,7 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
         if (category === "Reimbursement" && reimburserName && transactionName) {
             currentAtb -= amount;
             miscBalance -= amount;
-            updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
+            updateBalances(currentAtb, miscBalance, gasBalance);
 
             // Add the reimbursement to the Reimbursement Card and PTC
             addReimbursementTransaction(reimburserName, transactionName, amount);
@@ -156,18 +156,18 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
                     return;
                 }
             }
-            updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
+            updateBalances(currentAtb, miscBalance, gasBalance);
             addTransactionToPrevious(amount, "Gas", new Date().toLocaleDateString(), "red");
 
         } else if (category === "Misc") {
             // Miscellaneous Transaction
             currentAtb -= amount;
             miscBalance -= amount;
-            updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance);
+            updateBalances(currentAtb, miscBalance, gasBalance);
             addTransactionToPrevious(amount, "Misc", new Date().toLocaleDateString(), "red");
         }
 
-        // Close modal after transaction
+        // Close the transaction modal after adding the transaction
         closeModal("transactionModal");
     } else {
         alert("Please enter a valid amount.");
@@ -180,7 +180,7 @@ document.getElementById("updateAtbBtn").addEventListener('click', function () {
     let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
     let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
     if (!isNaN(newAtb)) {
-        updateBalancesBasedOnAtb(newAtb, miscBalance, gasBalance);
+        updateBalances(newAtb, miscBalance, gasBalance);
         closeModal("atbModal");
     } else {
         alert("Please enter a valid amount.");
@@ -212,7 +212,7 @@ document.getElementById("addPaydayBtn").addEventListener('click', function () {
         miscBalance += miscAddition;
         currentAtb += payAmount;
 
-        updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance, insuranceBalance, savingsBalance);
+        updateBalances(currentAtb, miscBalance, gasBalance, insuranceBalance, savingsBalance);
         addTransactionToPrevious(payAmount, "Payday", payDate, "green");
 
         closeModal("paydayModal");
