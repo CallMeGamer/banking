@@ -1,5 +1,56 @@
 // buttons.js
 
+// Function to open a modal
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = "block";
+    }
+}
+
+// Function to close a modal
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+// Event Listeners to Open Modals
+document.getElementById("atbEditBtn").addEventListener('click', function () {
+    openModal("atbModal");
+});
+
+document.getElementById("paydayBtn").addEventListener('click', function () {
+    openModal("paydayModal");
+});
+
+document.getElementById("newTransactionBtn").addEventListener('click', function () {
+    openModal("transactionModal");
+});
+
+document.getElementById("calculationsBtn").addEventListener('click', function () {
+    openModal("calculationsModal");
+});
+
+// Event Listeners to Close Modals
+document.getElementById("closeAtbModal").addEventListener('click', function () {
+    closeModal("atbModal");
+});
+
+document.getElementById("closePaydayModal").addEventListener('click', function () {
+    closeModal("paydayModal");
+});
+
+document.getElementById("closeTransactionModal").addEventListener('click', function () {
+    closeModal("transactionModal");
+});
+
+document.getElementById("closeCalculationsModal").addEventListener('click', function () {
+    closeModal("calculationsModal");
+});
+
+// Add Transaction Button Functionality
 document.getElementById("addTransactionBtn").addEventListener('click', function () {
     const amount = parseFloat(document.getElementById("transactionAmount").value);
     const category = document.querySelector('input[name="category"]:checked').value;
@@ -50,7 +101,7 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
         }
 
         // Close modal after transaction
-        document.getElementById("transactionModal").style.display = "none";
+        closeModal("transactionModal");
     } else {
         alert("Please enter a valid amount.");
     }
@@ -116,7 +167,7 @@ document.getElementById("updateAtbBtn").addEventListener('click', function () {
     let gasBalance = parseFloat(document.getElementById("gasBalance").textContent);
     if (!isNaN(newAtb)) {
         updateBalancesBasedOnAtb(newAtb, miscBalance, gasBalance);
-        document.getElementById("atbModal").style.display = "none";
+        closeModal("atbModal");
     } else {
         alert("Please enter a valid amount.");
     }
@@ -150,11 +201,11 @@ document.getElementById("addPaydayBtn").addEventListener('click', function () {
         updateBalancesBasedOnAtb(currentAtb, miscBalance, gasBalance, insuranceBalance, savingsBalance);
         addTransactionToPrevious(payAmount, "Payday", payDate, "green");
 
-        document.getElementById("paydayModal").style.display = "none";
+        closeModal("paydayModal");
     } else {
         alert("Please enter a valid pay amount and date.");
     }
-}
+});
 
 // Update Calculations Modal (Save new calculation values)
 document.getElementById("updateCalculationsBtn").addEventListener('click', function () {
@@ -164,7 +215,7 @@ document.getElementById("updateCalculationsBtn").addEventListener('click', funct
 
     if (!isNaN(savingsPercentage) && !isNaN(gas) && !isNaN(insurance)) {
         alert("Calculations updated successfully!");
-        document.getElementById("calculationsModal").style.display = "none";
+        closeModal("calculationsModal");
     } else {
         alert("Please enter valid numbers for Savings, Gas, and Insurance.");
     }
