@@ -58,8 +58,9 @@ function updateBalancesBasedOnAtb(atb, misc, gas, insurance = 0, savings = 0) {
     document.getElementById("miscBalance").textContent = misc.toFixed(2);
     document.getElementById("atb").textContent = `$${atb.toFixed(2)}`;
 
-    // Ensure Misc balance is updated in the Spending Money Card
-    document.getElementById("spending-summary").querySelector('.balance').textContent = `$${misc.toFixed(2)}`;
+    // Update Misc balance in the Spending Money Card (green font)
+    const spendingMoneyCard = document.getElementById("spending-summary").querySelector('.balance');
+    spendingMoneyCard.textContent = `$${misc.toFixed(2)}`;
 }
 
 // Add transaction to the Previous Transactions Card (PTC)
