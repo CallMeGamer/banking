@@ -1,6 +1,5 @@
 // buttons.js
 
-// Add Transaction Button Functionality
 document.getElementById("addTransactionBtn").addEventListener('click', function () {
     const amount = parseFloat(document.getElementById("transactionAmount").value);
     const category = document.querySelector('input[name="category"]:checked').value;
@@ -56,6 +55,37 @@ document.getElementById("addTransactionBtn").addEventListener('click', function 
     }
 });
 
+// Reimbursement System - display new reimbursement in the Reimbursements card and PTC
+function addReimbursementTransaction(name, reason, amount) {
+    const reimbursementCard = document.getElementById("reimbursementContent");
+
+    // Create a new reimbursement entry
+    const newReimbursement = document.createElement('div');
+    newReimbursement.innerHTML = `
+        <p>${name} - ${reason}: $${amount.toFixed(2)} 
+        <button class="close-reimbursement" style="background-color: green; color: white;">Close</button></p>
+    `;
+    
+    // Add close functionality to the reimbursement
+    newReimbursement.querySelector('.close-reimbursement').addEventListener('click', function () {
+        let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
+        let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
+
+        // Return reimbursement amount to ATB and Misc
+        currentAtb += amount;
+        miscBalance += amount;
+        updateBalancesBasedOnAtb(currentAtb, miscBalance);
+
+        // Add positive transaction to PTC
+        addTransactionToPrevious(amount, `Reimbursement Closed: ${name}`, new Date().toLocaleDateString(), "green");
+
+        // Remove reimbursement from UI
+        newReimbursement.remove();
+    });
+
+    reimbursementCard.appendChild(newReimbursement);
+}
+
 // ATB Edit Button Functionality
 document.getElementById("updateAtbBtn").addEventListener('click', function () {
     const newAtb = parseFloat(document.getElementById("atbAmount").value);
@@ -101,36 +131,6 @@ document.getElementById("addPaydayBtn").addEventListener('click', function () {
     } else {
         alert("Please enter a valid pay amount and date.");
     }
-});
-
-// Reimbursement System - display new reimbursement in the Reimbursements Card and PTC
-function addReimbursementTransaction(name, reason, amount) {
-    const reimbursementCard = document.getElementById("reimbursementContent");
-
-    const newReimbursement = document.createElement('div');
-    newReimbursement.innerHTML = `
-        <p>${name} - ${reason}: $${amount.toFixed(2)} 
-        <button class="close-reimbursement" style="background-color: green; color: white;">Close</button></p>
-    `;
-    
-    // Add close functionality to the reimbursement
-    newReimbursement.querySelector('.close-reimbursement').addEventListener('click', function () {
-        let currentAtb = parseFloat(document.getElementById("atb").textContent.replace('$', ''));
-        let miscBalance = parseFloat(document.getElementById("miscBalance").textContent);
-
-        // Return reimbursement amount to ATB and Misc
-        currentAtb += amount;
-        miscBalance += amount;
-        updateBalancesBasedOnAtb(currentAtb, miscBalance);
-
-        // Add positive transaction to PTC
-        addTransactionToPrevious(amount, `Reimbursement Closed: ${name}`, new Date().toLocaleDateString(), "green");
-
-        // Remove reimbursement from UI
-        newReimbursement.remove();
-    });
-
-    reimbursementCard.appendChild(newReimbursement);
 }
 
 // Update Calculations Modal (Save new calculation values)
