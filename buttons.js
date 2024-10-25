@@ -79,8 +79,10 @@ function addTransactionToPrevious(amount, name, date, color) {
 function addReimbursementTransaction(name, reason, amount) {
     const reimbursementCard = document.getElementById("reimbursementContent");
 
-    // Remove default message when a reimbursement is added
-    reimbursementCard.innerHTML = ''; 
+    // If this is the first reimbursement, remove the default message
+    if (reimbursementCard.innerHTML === "You are not currently expecting reimbursement.") {
+        reimbursementCard.innerHTML = ''; 
+    }
 
     // Create a new reimbursement entry
     const newReimbursement = document.createElement('div');
