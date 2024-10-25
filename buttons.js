@@ -57,6 +57,9 @@ function updateBalancesBasedOnAtb(atb, misc, gas, insurance = 0, savings = 0) {
     document.getElementById("savingsBalance").textContent = savings.toFixed(2);
     document.getElementById("miscBalance").textContent = misc.toFixed(2);
     document.getElementById("atb").textContent = `$${atb.toFixed(2)}`;
+
+    // Ensure Misc balance is updated in the Spending Money Card
+    document.getElementById("spending-summary").querySelector('.balance').textContent = `$${misc.toFixed(2)}`;
 }
 
 // Add transaction to the Previous Transactions Card (PTC)
@@ -75,6 +78,9 @@ function addTransactionToPrevious(amount, name, date, color) {
 // Reimbursement System - display new reimbursement in the Reimbursements card and PTC
 function addReimbursementTransaction(name, reason, amount) {
     const reimbursementCard = document.getElementById("reimbursementContent");
+
+    // Remove default message when a reimbursement is added
+    reimbursementCard.innerHTML = ''; 
 
     // Create a new reimbursement entry
     const newReimbursement = document.createElement('div');
@@ -98,6 +104,11 @@ function addReimbursementTransaction(name, reason, amount) {
 
         // Remove reimbursement from UI
         newReimbursement.remove();
+
+        // Check if there are any remaining reimbursements
+        if (!reimbursementCard.hasChildNodes()) {
+            reimbursementCard.innerHTML = "You are not currently expecting reimbursement.";
+        }
     });
 
     reimbursementCard.appendChild(newReimbursement);
